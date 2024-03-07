@@ -18,4 +18,6 @@ func main() {
 
 	stringSlice1 := []string{"1", "2", "3", "4"}
 	fmt.Println(stringSlice1[:2])
+	stringSlice1 = append(stringSlice1, "6")
+	fmt.Println(stringSlice1[3:])
 }
