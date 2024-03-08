@@ -30,5 +30,6 @@ func main() {
 	printValue(10)
 	printValue("100")
 	printValue(123.01)
+	printValue2(1000)
 	printValue2(300, "400", 500.01)
 }
