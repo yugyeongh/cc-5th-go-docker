@@ -1,26 +1,32 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/acme/autocert"
+	"golang.org/x/sync/errgroup"
 )
 
 func main() {
 	router := gin.Default()
 
-	router.GET("/", func(c *gin.Context) {
-		c.String(http.StatusOK, "Hello world")
-	})
-
 	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "pong"})
+		c.String(200, "pong")
 	})
 
-	router.GET("/hello", func(c *gin.Context) {
-		name := c.Query("name")
-		c.String(http.StatusOK, "Hello, %s!", name)
+	var g errgroup.Group
+
+	g.Go(func() error {
+		return http.ListenAndServe(":http", http.RedirectHandler("https://naver.com", 303))
 	})
 
-	router.Run(":8080")
+	g.Go(func() error {
+		return http.Serve(autocert.NewListener("naver.com"), router)
+	})
+
+	if err := g.Wait(); err != nil {
+		log.Fatal(err)
+	}
 }
